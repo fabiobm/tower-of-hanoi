@@ -1,0 +1,130 @@
+#p2 {
+    font-size: 20px;
+    color: blue;
+}
+
+#inicio, #desiste {
+    margin-left: 512px;
+    width: 200px;
+    height: 50px;
+    font-size: 20px;
+    position: fixed;
+}
+
+#base {
+    height: 20px;
+    width: 93.75%;
+    margin-top: 475px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 10px;
+    background-color: #5C1F00;
+    position: fixed;
+}
+
+.pino {
+    height: 400px;
+    width: 20px; 
+    border-radius: 10px;
+    background-color: #5C1F00;
+    position: fixed;
+}
+
+#left {
+    margin-top: 90px;
+    margin-left: 200px;
+}
+
+#mid {
+    margin-top: 90px;
+    margin-left: 600px;
+}
+
+#right {
+    margin-top: 90px;
+    margin-left: 1000px;
+}
+
+.disco {
+    height: 30px;
+    border-radius: 12px;
+    position: fixed;
+}
+
+#d0 {
+    margin-top: 445px;
+    margin-left: 10px;
+    width: 400px;
+    background-color: #FF4D4D;
+}
+
+#d1 {
+    margin-top: 415px;
+    margin-left: 25px;
+    width: 370px;
+    background-color: #99FF66;
+}
+
+#d2 {
+    margin-top: 385px;
+    margin-left: 40px;
+    width: 340px;
+    background-color: #33CCFF;
+}
+
+#d3 {
+    margin-top: 355px;
+    margin-left: 55px;
+    width: 310px;
+    background-color: yellow;
+}
+
+#d4 {
+    margin-top: 325px;
+    margin-left: 70px;
+    width: 280px;
+    background-color: orange;
+}
+
+#d5 {
+    margin-top: 295px;
+    margin-left: 85px;
+    width: 250px;
+    background-color: #99FFCC;
+}
+
+#d6 {
+    margin-top: 265px;
+    margin-left: 100px;
+    width: 220px;
+    background-color: violet;
+}
+
+#d7 {
+    margin-top: 235px;
+    margin-left: 115px;
+    width: 190px;
+    background-color: #33ADAD;
+}
+
+#d8 {
+    margin-top: 205px;
+    margin-left: 130px;
+    width: 160px;
+    background-color: #A37547;
+}
+
+#d9 {
+    margin-top: 175px;
+    margin-left: 145px;
+    width: 130px;
+    background-color: #CCCCCC;
+}
+
+#movimentos {
+    font-size: 30px;
+    font-family: Verdana, sans-serif;
+    margin-left: 500px;
+    margin-top: 550px;
+    position: fixed;
+}

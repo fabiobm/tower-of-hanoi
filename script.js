@@ -1,238 +1,228 @@
-/* TO-DO                                        */
-/*                                              */
-/*  - opcao de mostrar a solucao (com botoes?)  */
-
-var x = -1;
-var pinos = [[], [], []];
-var primeiroJogo = true;
-var comecou = false;
-var movimentos = 0;
+var disks = -1;
+var rods = [[], [], []];
+var firstMatch = true;
+var started = false;
+var movements = 0;
 
 $(document).ready(function() {
+    $('.disk').hide(); // Initial state
+    $('#quit').hide();
 
-    $('.disco').hide();             // No começo
-    $('#desiste').hide();
+    $('#start').click(function() {
+        $('.disk').hide();
 
-    $('#inicio').click(function() {
-        $('.disco').hide();
-
-        if (!primeiroJogo) {
-            console.log("curtiu em, jogando de novo!?");
+        if (!firstMatch) {
             reset();
+        } else {
+            started = true;
         }
 
-        else
-            comecou = true;
-
-        while (isNaN(x) || x < 1 || x > 10)
-            x = prompt("Escolha o número de discos (1 a 10)");
+        while (isNaN(disks) || disks < 1 || disks > 10) {
+            disks = prompt("Choose the number of disks (1 to 10)");
+        }
         
-        for (var i = 0; i < x; i++)
+        for (var i = 0; i < disks; i++) {
             $('#d' + i).show();
-
-        initPinos();
-        $(this).hide();
-        $('#desiste').show();
-    });
-
-    $('#desiste').click(function() {
-        comecou = false;
-        primeiroJogo = false;
-        $(this).hide();
-        $('#inicio').show();
-    });
-
-    var disco;
-    var orig;
-    var discoSelecionado = -1;
-
-    $('.disco').click(function() {
-        if (discoSelecionado !== -1) {
-            $('#d' + disco).css('border', '');
         }
-        disco = $(this).attr('id').substring(1);
-        discoSelecionado = disco;
-        console.log("disco = " + disco);
-        orig = achaDisco(disco);
-        console.log("disco " + disco + " veio de " + orig);
+
+        initRods();
+        $(this).hide();
+        $('#quit').show();
+    });
+
+    $('#quit').click(function() {
+        started = false;
+        firstMatch = false;
+        $(this).hide();
+        $('#start').show();
+    });
+
+    var disk;
+    var orig;
+    var selectedDisk = -1;
+
+    $('.disk').click(function() {
+        if (selectedDisk !== -1) {
+            $('#d' + disk).css('border', '');
+        }
+
+        disk = $(this).attr('id').substring(1);
+        selectedDisk = disk;
+        orig = findDisk(disk);
         $(this).css('border', '0.171875em dashed black');
     });
 
-    $('.pino').click(function() {
-        console.log("aqui o disco eh " + disco);
+    $('.rod').click(function() {
         var dest = $(this).attr('id');
-        console.log("destino = " + dest);
-        console.log("disco " + disco + " de " + orig + " pra " + dest);
 
         switch(dest) {
-
             case 'left':
-                moveDisco(disco, orig, 0);
+                moveDisk(disk, orig, 0);
                 break;
 
             case 'mid':
-                moveDisco(disco, orig, 1);
+                moveDisk(disk, orig, 1);
                 break;
 
             case 'right':
-                moveDisco(disco, orig, 2);
+                moveDisk(disk, orig, 2);
                 break;
 
             default:
-                console.log('ERRO: id do div do pino destino inválido');
+                console.error('The id (' + dest + ') of the destination rod div is invalid');
         }
 
-        $('#d' + disco).css('border', '');
+        $('#d' + disk).css('border', '');
 
-        discoSelecionado = -1;
+        selectedDisk = -1;
 
-        // Aviso de que ganhou e reinicia tudo
-        if (ganhou()) {
-            comecou = false;
-            console.log('ganhou, boa');
-            $('#desiste').hide();
-            $('#inicio').show();
-            primeiroJogo = false;
+        // Winning alert and restart
+        if (success()) {
+            started = false;
+            $('#quit').hide();
+            $('#start').show();
+            firstMatch = false;
+
             setTimeout(function() {
-                if (x === 1)
-                    alert('Parabéns! Você ganhou com ' + movimentos + ' movimento!\nO mínimo possível é ' + (Math.pow(2, x) - 1) + '.');
-                else
-                    alert('Parabéns! Você ganhou com ' + movimentos + ' movimentos!\nO mínimo possível é ' + (Math.pow(2, x) - 1) + '.');
+                if (disks === 1) {
+                    alert('Congratulations! You did it with ' + movements + ' movement!\nThe minimum is ' + (Math.pow(2, disks) - 1));
+                } else {
+                    alert('Congratulations! You did it with ' + movements + ' movements!\nThe minimum is ' + (Math.pow(2, disks) - 1));
+                }
             }, 800);
         }
     });
 });
 
-function initPinos() {
-    for (var i = 0; i < x; i++) {
-        pinos[0][i] = true;
-        pinos[1][i] = pinos[2][i] = false;
+function initRods() {
+    for (var i = 0; i < disks; i++) {
+        rods[0][i] = true;
+        rods[1][i] = rods[2][i] = false;
     }
 }
 
-function nDiscos(pino) {
+function nDisks(rod) {
     var n = 0;
-    for (var i = 0; i < x; i++) {
-        if (pinos[pino][i])
+    for (var i = 0; i < disks; i++) {
+        if (rods[rod][i]) {
             n++;
+        }
     }
 
     return n;
 }
 
-function achaDisco(disco) {
-    if (pinos[0][disco]) {
-        console.log('pino 0');
+function findDisk(disk) {
+    if (rods[0][disk]) {
         return 0;
     }
-    if (pinos[1][disco]) {
-        console.log('pino 1');
+
+    if (rods[1][disk]) {
         return 1;
     }
-    if (pinos[2][disco]) {
-        console.log('pino 2');
+
+    if (rods[2][disk]) {
         return 2;
     }
 }
 
-function moveDisco(disco, orig, dest, vel) {
+function moveDisk(disk, orig, dest, speed) {
+    if (typeof(speed) === 'undefined') {
+        speed = 4;
+    }
     
-    if (typeof(vel) === 'undefined')
-        vel = 4;
-    
-    console.log("disco " + disco + " de " + orig + " pra " + dest);
-    // Checa a validade do movimento
+    // Checks whether the movement is valid
     if (dest === orig) {
-        console.log("ERRO: Destino igual a origem do movimento");
-        alert('Jogada inválida, destino igual a origem do movimento');
+        console.error('Destination (' + dest + ') is the same as origin');
+        alert('Invalid move, destination is the same as origin');
         return false;
     }
 
-    if (achaDisco(disco) !== orig) {
-        console.log("ERRO: Tentando mover disco " + disco + " que não está no pino " + orig);
-        alert('Jogada inválida, tentativa de mover disco que não está no pino');
+    if (findDisk(disk) !== orig) {
+        console.error('Attempt to move disk (' + disk + ') that is not on the rod (' + orig + ')');
+        alert('Invalid move, attempt to move disk that is not on the rod');
         return false;
     }
 
     var maxDest = 0;
     var maxOrig = 0;
-    for (var i = 0; i < x; i++) {
-        if (pinos[dest][i])
+    for (var i = 0; i < disks; i++) {
+        if (rods[dest][i])
             maxDest = i;
-        if (pinos[orig][i])
+        if (rods[orig][i])
             maxOrig = i;
     }
     
-    if (maxDest > disco) {
-        console.log("ERRO: Jogada ilegal, tentativa de por disco maior em cima de menor");
-        alert('Jogada inválida, tentativa de pôr disco maior em cima de disco menor');
+    if (maxDest > disk) {
+        console.error('Attempt to place bigger disk (' + disk + ') on top of smaller one (' + maxDest + ')');
+        alert('Invalid move, attempt to place bigger disk on top of smaller one');
         return false;
     }
 
-    if (maxOrig > disco) {
-        console.log("ERRO: Jogada ilegal, tentativa de mover disco que não está no topo");
-        alert('Jogada inválida, tentativa de mover disco que não está no topo do seu pino');
+    if (maxOrig > disk) {
+        console.error('Attempt to move disk (' + disk + ') that is not on top of its rod (' + maxOrig + ')');
+        alert('Invalid move, attempt to move disk that is not on top of its rod');
         return false;
     }
 
-    if (!comecou) {
-        console.log("ERRO: Jogo terminou e novo jogo ainda não começou");
-        alert('Jogada inválida, jogo ainda não começou');
+    if (!started) {
+        console.error('A match has ended and a new one has not started yet');
+        alert('Invalid move, match has not started yet');
         return false;
     }
 
-    // Move na interface gráfica
-    if (nDiscos(orig) > nDiscos(dest)) {
-        ajustaHorizontal(disco, dest, vel * 100);
-        ajustaVertical(disco, nDiscos(dest), vel * 100);
+    if (nDisks(orig) > nDisks(dest)) {
+        adjustHorizontally(disk, dest, speed * 100);
+        adjustVertically(disk, nDisks(dest), speed * 100);
     }
     
     else {
-        ajustaVertical(disco, nDiscos(dest), vel * 100);
-        ajustaHorizontal(disco, dest, vel * 100);
+        adjustVertically(disk, nDisks(dest), speed * 100);
+        adjustHorizontally(disk, dest, speed * 100);
     }
 
-    // Move nas arrays
-    pinos[dest][disco] = true;
-    pinos[orig][disco] = false;
+    rods[dest][disk] = true;
+    rods[orig][disk] = false;
 
-    movimentos++;
-    $('#movimentos').text('Movimentos: ' + movimentos);
-    if (movimentos > 0) {
-        var mvm = 500 - 15 * (Math.floor(Math.log(movimentos)/Math.log(10)) + 1);
+    movements++;
+    $('#movements').text('Movements: ' + movements);
+    if (movements > 0) {
+        var mvm = 500 - 15 * (Math.floor(Math.log(movements) / Math.log(10)) + 1);
         mvm = mvm * 0.0625;
-        $('#movimentos').css('margin-left', mvm + 'em');
+        $('#movements').css('margin-left', mvm + 'em');
     }
 
     return true;
 }
 
-function ajustaVertical(disco, n, vel) {
-    var tm = 445 - 30 * n;
-    tm = tm * 0.0625;
-    console.log('tm = ' + tm);
-    $('#d' + disco).animate({marginTop: tm + 'em'}, vel);
+function adjustVertically(disk, n, speed) {
+    var marginTop = 445 - 30 * n;
+    marginTop = marginTop * 0.0625;
+    $('#d' + disk).animate({marginTop: marginTop + 'em'}, speed);
 }
 
-function ajustaHorizontal(disco, dest, vel) {
-    var ml = 400 * dest + 10 + 15 * disco;
-    ml = ml * 0.0625;
-    $('#d' + disco).animate({marginLeft: ml + 'em'}, vel);
+function adjustHorizontally(disk, dest, speed) {
+    var marginLeft = 400 * dest + 10 + 15 * disk;
+    marginLeft = marginLeft * 0.0625;
+    $('#d' + disk).animate({marginLeft: marginLeft + 'em'}, speed);
 }
 
-function ganhou() {
-    return (nDiscos(2) === parseInt(x) && nDiscos(0) === 0 && nDiscos(1) === 0) ? true : false;
+function success() {
+    return (nDisks(2) === parseInt(disks) && nDisks(0) === 0 && nDisks(1) === 0) ? true : false;
 }
 
 function reset() {
-    comecou = true;
-    movimentos = 0;
-    $('#movimentos').text('Movimentos: 0').css('margin-left', '500px');
-    x = -1;
-    pinos = [[], [], []];
+    started = true;
+    movements = 0;
+    $('#movements').text('Movements: 0').css('margin-left', '500px');
+    disks = -1;
+    rods = [[], [], []];
+
     for (var i = 0; i < 10; i++) {
-        ajustaHorizontal(i, 0, 1);
-        if (!ganhou())
-            ajustaVertical(i, i, 1);
+        adjustHorizontally(i, 0, 1);
+
+        if (!success()) {
+            adjustVertically(i, i, 1);
+        }
     }
 }

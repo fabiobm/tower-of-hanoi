@@ -1,130 +1,135 @@
+#main-container {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+}
+
 #p2 {
     font-size: 20px;
     color: blue;
 }
 
 #start, #quit {
-    margin-left: 512px;
+    margin-bottom: 48px;
     width: 200px;
     height: 50px;
     font-size: 20px;
-    position: fixed;
+}
+
+#game-grid {
+    display: grid;
+    width: 93.75%;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr repeat(10, 30px) 20px;
 }
 
 #base {
     height: 20px;
-    width: 93.75%;
-    margin-top: 475px;
-    margin-left: auto;
-    margin-right: auto;
     border-radius: 10px;
     background-color: #5C1F00;
-    position: fixed;
+    grid-column: 1 / span 3;
+    grid-row: 12 / auto;
 }
 
 .rod {
     height: 400px;
-    width: 20px; 
+    width: 20px;
     border-radius: 10px;
     background-color: #5C1F00;
-    position: fixed;
+    grid-row: 1 / span 12;
+    justify-self: center;
 }
 
 #left {
-    margin-top: 90px;
-    margin-left: 200px;
+    grid-column: 1 / auto;
 }
 
 #mid {
-    margin-top: 90px;
-    margin-left: 600px;
+    grid-column: 2 / auto;
 }
 
 #right {
-    margin-top: 90px;
-    margin-left: 1000px;
+    grid-column: 3 / auto;
 }
 
 .disk {
     height: 30px;
     border-radius: 12px;
-    position: fixed;
+    justify-self: center;
+    z-index: 2;
 }
 
 #d0 {
-    margin-top: 445px;
-    margin-left: 10px;
-    width: 400px;
+    grid-column: 1 / auto;
+    grid-row: 11 / auto;
+    width: 100%;
     background-color: #FF4D4D;
 }
 
 #d1 {
-    margin-top: 415px;
-    margin-left: 25px;
-    width: 370px;
+    grid-column: 1 / auto;
+    grid-row: 10 / auto;
+    width: 91.25%;
     background-color: #99FF66;
 }
 
 #d2 {
-    margin-top: 385px;
-    margin-left: 40px;
-    width: 340px;
+    grid-column: 1 / auto;
+    grid-row: 9 / auto;
+    width: 82.5%;
     background-color: #33CCFF;
 }
 
 #d3 {
-    margin-top: 355px;
-    margin-left: 55px;
-    width: 310px;
+    grid-column: 1 / auto;
+    grid-row: 8 / auto;
+    width: 73.75%;
     background-color: yellow;
 }
 
 #d4 {
-    margin-top: 325px;
-    margin-left: 70px;
-    width: 280px;
+    grid-column: 1 / auto;
+    grid-row: 7 / auto;
+    width: 65%;
     background-color: orange;
 }
 
 #d5 {
-    margin-top: 295px;
-    margin-left: 85px;
-    width: 250px;
+    grid-column: 1 / auto;
+    grid-row: 6 / auto;
+    width: 56.25%;
     background-color: #99FFCC;
 }
 
 #d6 {
-    margin-top: 265px;
-    margin-left: 100px;
-    width: 220px;
+    grid-column: 1 / auto;
+    grid-row: 5 / auto;
+    width: 47.5%;
     background-color: violet;
 }
 
 #d7 {
-    margin-top: 235px;
-    margin-left: 115px;
-    width: 190px;
+    grid-column: 1 / auto;
+    grid-row: 4 / auto;
+    width: 40%;
     background-color: #33ADAD;
 }
 
 #d8 {
-    margin-top: 205px;
-    margin-left: 130px;
-    width: 160px;
+    grid-column: 1 / auto;
+    grid-row: 3 / auto;
+    width: 32.5%;
     background-color: #A37547;
 }
 
 #d9 {
-    margin-top: 175px;
-    margin-left: 145px;
-    width: 130px;
+    grid-column: 1 / auto;
+    grid-row: 2 / auto;
+    width: 25%;
     background-color: #CCCCCC;
 }
 
 #movements {
     font-size: 30px;
     font-family: Verdana, sans-serif;
-    margin-left: 500px;
-    margin-top: 550px;
-    position: fixed;
 }

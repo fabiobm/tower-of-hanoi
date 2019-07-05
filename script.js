@@ -18,9 +18,9 @@ $(document).ready(function() {
         }
 
         while (isNaN(disks) || disks < 1 || disks > 10) {
-            disks = prompt("Choose the number of disks (1 to 10)");
+            disks = prompt('Choose the number of disks (1 to 10)');
         }
-        
+
         for (var i = 0; i < disks; i++) {
             $('#d' + i).show();
         }
@@ -57,15 +57,15 @@ $(document).ready(function() {
 
         switch(dest) {
             case 'left':
-                moveDisk(disk, orig, 0);
+                moveDisk(disk, orig, 0, 0.6);
                 break;
 
             case 'mid':
-                moveDisk(disk, orig, 1);
+                moveDisk(disk, orig, 1, 0.6);
                 break;
 
             case 'right':
-                moveDisk(disk, orig, 2);
+                moveDisk(disk, orig, 2, 0.6);
                 break;
 
             default:
@@ -89,7 +89,7 @@ $(document).ready(function() {
                 } else {
                     alert('Congratulations! You did it with ' + movements + ' movements!\nThe minimum is ' + (Math.pow(2, disks) - 1));
                 }
-            }, 800);
+            }, 1200);
         }
     });
 });
@@ -127,10 +127,6 @@ function findDisk(disk) {
 }
 
 function moveDisk(disk, orig, dest, speed) {
-    if (typeof(speed) === 'undefined') {
-        speed = 4;
-    }
-    
     // Checks whether the movement is valid
     if (dest === orig) {
         console.error('Destination (' + dest + ') is the same as origin');
@@ -147,12 +143,15 @@ function moveDisk(disk, orig, dest, speed) {
     var maxDest = 0;
     var maxOrig = 0;
     for (var i = 0; i < disks; i++) {
-        if (rods[dest][i])
+        if (rods[dest][i]) {
             maxDest = i;
-        if (rods[orig][i])
+        }
+
+        if (rods[orig][i]) {
             maxOrig = i;
+        }
     }
-    
+
     if (maxDest > disk) {
         console.error('Attempt to place bigger disk (' + disk + ') on top of smaller one (' + maxDest + ')');
         alert('Invalid move, attempt to place bigger disk on top of smaller one');
@@ -171,40 +170,43 @@ function moveDisk(disk, orig, dest, speed) {
         return false;
     }
 
-    if (nDisks(orig) > nDisks(dest)) {
-        adjustHorizontally(disk, dest, speed * 100);
-        adjustVertically(disk, nDisks(dest), speed * 100);
-    }
-    
-    else {
-        adjustVertically(disk, nDisks(dest), speed * 100);
-        adjustHorizontally(disk, dest, speed * 100);
-    }
+    adjustDisk(disk, nDisks(orig), nDisks(dest), orig, dest, speed);
 
     rods[dest][disk] = true;
     rods[orig][disk] = false;
 
     movements++;
     $('#movements').text('Movements: ' + movements);
-    if (movements > 0) {
-        var mvm = 500 - 15 * (Math.floor(Math.log(movements) / Math.log(10)) + 1);
-        mvm = mvm * 0.0625;
-        $('#movements').css('margin-left', mvm + 'em');
-    }
 
     return true;
 }
 
-function adjustVertically(disk, n, speed) {
-    var marginTop = 445 - 30 * n;
-    marginTop = marginTop * 0.0625;
-    $('#d' + disk).animate({marginTop: marginTop + 'em'}, speed);
+function columnSize() {
+    return $('#d0').width();
 }
 
-function adjustHorizontally(disk, dest, speed) {
-    var marginLeft = 400 * dest + 10 + 15 * disk;
-    marginLeft = marginLeft * 0.0625;
-    $('#d' + disk).animate({marginLeft: marginLeft + 'em'}, speed);
+function adjustDisk(diskNumber, nOrig, nDest, orig, dest, duration) {
+    var disk = $('#d' + diskNumber);
+    var horizontal = (dest - orig) * columnSize();
+    var vertical = (nOrig - nDest - 1) * 30;
+
+    // CSS3 transitions don't (yet?) animate grid-column/grid-row changes,
+    // so the transform is used only for the animation (in two steps, their order
+    // depending on the origin/destination of the disk) and, after the animation
+    // has completed, grid-row and grid-column are updated.
+    disk.css({
+        transition: `ease-in-out ${duration}s transform`,
+        transform: `translate(${nOrig > nDest ? horizontal + 'px, 0' : '0, ' + vertical + 'px'})`
+    });
+    setTimeout(() => {
+        disk.css({ transform: `translate(${horizontal}px, ${vertical}px)`});
+        setTimeout(() => disk.css({
+            gridColumn: `${dest + 1} / auto`,
+            gridRow: `${11 - nDest} / auto`,
+            transition: 'none',
+            transform: 'translate(0, 0)'
+        }), duration * 1000);
+    }, duration * 1000);
 }
 
 function success() {
@@ -214,15 +216,11 @@ function success() {
 function reset() {
     started = true;
     movements = 0;
-    $('#movements').text('Movements: 0').css('margin-left', '500px');
+    $('#movements').text('Movements: 0');
     disks = -1;
     rods = [[], [], []];
 
     for (var i = 0; i < 10; i++) {
-        adjustHorizontally(i, 0, 1);
-
-        if (!success()) {
-            adjustVertically(i, i, 1);
-        }
+        $('#d' + i).css({gridColumn: '1 / auto', gridRow: `${11 - i} / auto`});
     }
 }

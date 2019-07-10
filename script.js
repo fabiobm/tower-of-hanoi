@@ -49,7 +49,7 @@ $(document).ready(function() {
         disk = $(this).attr('id').substring(1);
         selectedDisk = disk;
         orig = findDisk(disk);
-        $(this).css('border', '0.171875em dashed black');
+        $(this).css({border: '3px dashed black'});
     });
 
     $('.rod').click(function() {

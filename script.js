@@ -1,8 +1,25 @@
+// TODO: create modal to use instead of alerts/prompts
+// TODO: consider changing widths/making them vary with # of disks
+// TODO: test across different browsers and resolutions
+// FIXME: when clicking on something after winning, 'invalid move'
+//        show up and then 'you won' is repeated (maybe disable
+//        clicking on 'won'/'not started' state?)
+
 var disks = -1;
 var rods = [[], [], []];
 var firstMatch = true;
 var started = false;
 var movements = 0;
+var modalButtonTypes = {
+    OK: {
+        text: 'OK',
+        action: hideModal
+    },
+    CANCEL: {
+        text: 'Cancel',
+        action: hideModal
+    }
+};
 
 $(document).ready(function() {
     $('.disk').hide(); // Initial state
@@ -17,17 +34,21 @@ $(document).ready(function() {
             started = true;
         }
 
-        while (isNaN(disks) || disks < 1 || disks > 10) {
-            disks = prompt('Choose the number of disks (1 to 10)');
-        }
+        showModal(
+            'Choose a number of disks between 1 and 10:',
+            ['OK', 'CANCEL'],
+            0,
+            {min: 1, max: 10, callback: nDisks => {
+                disks = nDisks;
+                for (var i = 0; i < disks; i++) {
+                    $('#d' + i).show();
+                }
 
-        for (var i = 0; i < disks; i++) {
-            $('#d' + i).show();
-        }
-
-        initRods();
-        $(this).hide();
-        $('#quit').show();
+                initRods();
+                $(this).hide();
+                $('#quit').show();
+            }}
+        );
     });
 
     $('#quit').click(function() {
@@ -83,13 +104,14 @@ $(document).ready(function() {
             $('#start').show();
             firstMatch = false;
 
-            setTimeout(function() {
-                if (disks === 1) {
-                    alert('Congratulations! You did it with ' + movements + ' movement!\nThe minimum is ' + (Math.pow(2, disks) - 1));
-                } else {
-                    alert('Congratulations! You did it with ' + movements + ' movements!\nThe minimum is ' + (Math.pow(2, disks) - 1));
-                }
-            }, 1200);
+            minimum = (Math.pow(2, disks) - 1);
+            showModal([
+                'Congratulations! You did it with ' + movements + ' movement' +
+                    (movements === 1 ? '' : 's') + '!',
+                '',
+                'The minimum is ' + minimum +
+                    (movements > minimum ? ' ;)' : ' :)')
+            ], ['OK', 'CANCEL'], 1200);
         }
     });
 });
@@ -182,7 +204,7 @@ function moveDisk(disk, orig, dest, speed) {
 }
 
 function columnSize() {
-    return $('#d0').width();
+    return $('#d0').outerWidth();
 }
 
 function adjustDisk(diskNumber, nOrig, nDest, orig, dest, duration) {
@@ -223,4 +245,76 @@ function reset() {
     for (var i = 0; i < 10; i++) {
         $('#d' + i).css({gridColumn: '1 / auto', gridRow: `${11 - i} / auto`});
     }
+}
+
+function showModal(content, buttons, delay, inputOpts) {
+    setTimeout(() => {
+        joinedContent = content;
+        if (Array.isArray(content)) {
+            joinedContent = content.join('<br/>');
+        }
+
+        container = $('<div class="modal-container"></div>');
+        modal = $('<div class="modal"></modal>');
+        modal.html(joinedContent);
+
+        if (inputOpts) {
+            inputContainer = $('<div class="modal-input"></div>');
+            current = $('<div class="input-current-value">' + inputOpts.min + '</div>');
+            plusButton = $('<div class="input-plus">＋</div>');
+            minusButton = $('<div class="input-minus disabled">－</div>');
+            plusButton.click(() => {
+                curr = parseInt(current.text());
+                if (curr < inputOpts.max) {
+                    current.text(curr + 1);
+                    if (curr + 1 === inputOpts.max) {
+                        plusButton.addClass('disabled');
+                    } else if (curr === inputOpts.min) {
+                        minusButton.removeClass('disabled');
+                    }
+                }
+            });
+            minusButton.click(() => {
+                curr = parseInt(current.text());
+                if (curr > inputOpts.min) {
+                    current.text(curr - 1);
+                    if (curr - 1 === inputOpts.min) {
+                        minusButton.addClass('disabled');
+                    } else if (curr === inputOpts.max) {
+                        plusButton.removeClass('disabled');
+                    }
+                }
+            });
+
+            inputContainer.append(minusButton);
+            inputContainer.append(current);
+            inputContainer.append(plusButton);
+            modal.append(inputContainer);
+        }
+
+        buttonsContainer = $('<div class="modal-buttons"></div>")');
+        modal.append(buttonsContainer);
+        container.append(modal);
+
+        buttons.forEach((type, i) => {
+            button = $('<button class="modal-button"></button>');
+            button.html(modalButtonTypes[type].text);
+            if ((i + 1) < buttons.length) { button.css({marginRight: '8px'}); }
+            if (type === 'OK' && inputOpts) {
+                button.click(() => {
+                    inputOpts.callback(parseInt($('.input-current-value').text()));
+                    modalButtonTypes[type].action();
+                });
+            } else {
+                button.click(modalButtonTypes[type].action);
+            }
+            buttonsContainer.append(button);
+        });
+
+        $('body').append(container);
+    }, delay);
+}
+
+function hideModal() {
+    $('.modal-container').remove();
 }

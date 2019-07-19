@@ -1,10 +1,3 @@
-// TODO: create modal to use instead of alerts/prompts
-// TODO: consider changing widths/making them vary with # of disks
-// TODO: test across different browsers and resolutions
-// FIXME: when clicking on something after winning, 'invalid move'
-//        show up and then 'you won' is repeated (maybe disable
-//        clicking on 'won'/'not started' state?)
-
 var disks = -1;
 var rods = [[], [], []];
 var firstMatch = true;
@@ -18,6 +11,10 @@ var modalButtonTypes = {
     CANCEL: {
         text: 'Cancel',
         action: hideModal
+    },
+    START: {
+        text: 'Start',
+        action: hideModal
     }
 };
 
@@ -26,19 +23,16 @@ $(document).ready(function() {
     $('#quit').hide();
 
     $('#start').click(function() {
-        $('.disk').hide();
-
         if (!firstMatch) {
             reset();
-        } else {
-            started = true;
         }
 
         showModal(
             'Choose a number of disks between 1 and 10:',
-            ['OK', 'CANCEL'],
+            ['CANCEL', 'START'],
             0,
             {min: 1, max: 10, callback: nDisks => {
+                started = true;
                 disks = nDisks;
                 for (var i = 0; i < disks; i++) {
                     $('#d' + i).show();
@@ -63,6 +57,7 @@ $(document).ready(function() {
     var selectedDisk = -1;
 
     $('.disk').click(function() {
+        if (!started) return;
         if (selectedDisk !== -1) {
             $('#d' + disk).css('border', '');
         }
@@ -74,6 +69,7 @@ $(document).ready(function() {
     });
 
     $('.rod').click(function() {
+        if (!started) return;
         var dest = $(this).attr('id');
 
         switch(dest) {
@@ -111,7 +107,7 @@ $(document).ready(function() {
                 '',
                 'The minimum is ' + minimum +
                     (movements > minimum ? ' ;)' : ' :)')
-            ], ['OK', 'CANCEL'], 1200);
+            ], ['OK'], 1200);
         }
     });
 });
@@ -149,16 +145,18 @@ function findDisk(disk) {
 }
 
 function moveDisk(disk, orig, dest, speed) {
+    if (!started) return false;
+
     // Checks whether the movement is valid
     if (dest === orig) {
         console.error('Destination (' + dest + ') is the same as origin');
-        alert('Invalid move, destination is the same as origin');
+        showModal('Invalid move, destination is the same as origin', ['OK'], 0);
         return false;
     }
 
     if (findDisk(disk) !== orig) {
         console.error('Attempt to move disk (' + disk + ') that is not on the rod (' + orig + ')');
-        alert('Invalid move, attempt to move disk that is not on the rod');
+        showModal('Invalid move, attempt to move disk that is not on the rod', ['OK'], 0);
         return false;
     }
 
@@ -176,19 +174,13 @@ function moveDisk(disk, orig, dest, speed) {
 
     if (maxDest > disk) {
         console.error('Attempt to place bigger disk (' + disk + ') on top of smaller one (' + maxDest + ')');
-        alert('Invalid move, attempt to place bigger disk on top of smaller one');
+        showModal('Invalid move, attempt to place bigger disk on top of smaller one', ['OK'], 0);
         return false;
     }
 
     if (maxOrig > disk) {
         console.error('Attempt to move disk (' + disk + ') that is not on top of its rod (' + maxOrig + ')');
-        alert('Invalid move, attempt to move disk that is not on top of its rod');
-        return false;
-    }
-
-    if (!started) {
-        console.error('A match has ended and a new one has not started yet');
-        alert('Invalid move, match has not started yet');
+        showModal('Invalid move, attempt to move disk that is not on top of its rod', ['OK'], 0);
         return false;
     }
 
@@ -236,7 +228,7 @@ function success() {
 }
 
 function reset() {
-    started = true;
+    $('.disk').hide();
     movements = 0;
     $('#movements').text('Movements: 0');
     disks = -1;
@@ -297,10 +289,10 @@ function showModal(content, buttons, delay, inputOpts) {
         container.append(modal);
 
         buttons.forEach((type, i) => {
-            button = $('<button class="modal-button"></button>');
+            button = $('<button class="modal-button ' + type.toLowerCase() + '"></button>');
             button.html(modalButtonTypes[type].text);
             if ((i + 1) < buttons.length) { button.css({marginRight: '8px'}); }
-            if (type === 'OK' && inputOpts) {
+            if (type === 'START' && inputOpts) {
                 button.click(() => {
                     inputOpts.callback(parseInt($('.input-current-value').text()));
                     modalButtonTypes[type].action();

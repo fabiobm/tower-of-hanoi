@@ -19,7 +19,6 @@ button {
     cursor: pointer;
     font-family: Helvetica, Arial, "Lucida Grande", sans-serif;
     font-weight: bold;
-    background-color: #f1f1f1;
     border: 0;
     user-select: none;
     -ms-user-select: none;
@@ -27,7 +26,6 @@ button {
     -moz-user-select: none;
 }
 
-button:hover { background-color: #e5e5e5; }
 button:focus { outline: none; }
 button:active { color: initial; }
 
@@ -37,6 +35,15 @@ button:active { color: initial; }
     width: 200px;
     height: 50px;
     font-size: 20px;
+}
+
+#start, #quit {
+    background-color: #f1f1f1;
+    color: black;
+}
+
+#start:hover, #quit:hover {
+    background-color: #e5e5e5;
 }
 
 #game-grid {
@@ -205,6 +212,23 @@ button:active { color: initial; }
     font-size: 16px;
 }
 
+.modal-button.start {
+    background-color: rgb(39, 134, 243);
+    color: #f5f5f5;
+}
+
+.modal-button.start:hover {
+    background-color: rgb(39, 119, 243);
+}
+
+.modal-button.ok, .modal-button.cancel {
+    background-color: #f1f1f1;
+}
+
+.modal-button.ok:hover, .modal-button.cancel:hover {
+    background-color: #e5e5e5;
+}
+
 .modal-input {
     display: flex;
     align-items: center;
@@ -216,11 +240,9 @@ button:active { color: initial; }
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #444;
-    color: #444;
+    color: rgb(39, 134, 243);
     width: 24px;
     height: 24px;
-    border-radius: 50%;
     cursor: pointer;
     user-select: none;
     -ms-user-select: none;
@@ -229,14 +251,12 @@ button:active { color: initial; }
 }
 
 .input-plus.disabled, .input-minus.disabled {
-    border-color: #dedede;
-    color: #dedede;
+    color: rgba(39, 134, 243, 0.2);
     cursor: default;
 }
 
 .input-plus:not(.disabled):hover, .input-minus:not(.disabled):hover {
-    border-color: black;
-    color: black;
+    color: rgb(11, 99, 199);
 }
 
 .input-plus {

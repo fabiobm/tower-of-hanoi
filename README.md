@@ -10,7 +10,6 @@ practice a little CSS Grid.
 
 ## Possible Improvements
 
-* [ ] Consider changing disk widths or defining them dynamically according to number of disks
 * [ ] Add keyboard navigation/controls
 * [ ] Add Portuguese localization
 * [ ] Add option to show solution (https://github.com/fabiobm/tower-of-hanoi/tree/solution)

@@ -18,6 +18,20 @@ var modalButtonTypes = {
     }
 };
 
+// dynamic disk sizes (in %) according to number of disks
+var diskSizes = {
+    1: [100],
+    2: [100, 80],
+    3: [100, 80, 60],
+    4: [100, 80, 60, 40],
+    5: [100, 85, 70, 55, 40],
+    6: [100, 85, 70, 55, 40, 25],
+    7: [100, 87.5, 75, 62.5, 50, 37.5, 25],
+    8: [100, 87.5, 75, 62.5, 53.125, 43.75, 34.375, 25],
+    9: [100, 90.625, 81.25, 71.875, 62.5, 53.125, 43.75, 34.375, 25],
+    10: [100, 91.25, 82.5, 73.75, 65, 56.25, 47.5, 40, 32.5, 25],
+};
+
 $(document).ready(function() {
     $('.disk').hide(); // Initial state
     $('#quit').hide();
@@ -35,6 +49,7 @@ $(document).ready(function() {
                 started = true;
                 disks = nDisks;
                 for (var i = 0; i < disks; i++) {
+                    $('#d' + i).css({width: diskSizes[disks][i] + '%'});
                     $('#d' + i).show();
                 }
 
@@ -228,6 +243,7 @@ function success() {
 }
 
 function reset() {
+    $('.disk').css('border', '');
     $('.disk').hide();
     movements = 0;
     $('#movements').text('Movements: 0');

@@ -109,70 +109,60 @@ button:active { color: initial; }
 #d0 {
     grid-column: 1 / auto;
     grid-row: 11 / auto;
-    width: 100%;
     background-color: #FF4D4D;
 }
 
 #d1 {
     grid-column: 1 / auto;
     grid-row: 10 / auto;
-    width: 91.25%;
     background-color: #99FF66;
 }
 
 #d2 {
     grid-column: 1 / auto;
     grid-row: 9 / auto;
-    width: 82.5%;
     background-color: #33CCFF;
 }
 
 #d3 {
     grid-column: 1 / auto;
     grid-row: 8 / auto;
-    width: 73.75%;
     background-color: yellow;
 }
 
 #d4 {
     grid-column: 1 / auto;
     grid-row: 7 / auto;
-    width: 65%;
     background-color: orange;
 }
 
 #d5 {
     grid-column: 1 / auto;
     grid-row: 6 / auto;
-    width: 56.25%;
     background-color: #99FFCC;
 }
 
 #d6 {
     grid-column: 1 / auto;
     grid-row: 5 / auto;
-    width: 47.5%;
     background-color: violet;
 }
 
 #d7 {
     grid-column: 1 / auto;
     grid-row: 4 / auto;
-    width: 40%;
     background-color: #33ADAD;
 }
 
 #d8 {
     grid-column: 1 / auto;
     grid-row: 3 / auto;
-    width: 32.5%;
     background-color: #A37547;
 }
 
 #d9 {
     grid-column: 1 / auto;
     grid-row: 2 / auto;
-    width: 25%;
     background-color: #CCCCCC;
 }
 
